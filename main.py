@@ -9,7 +9,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMar
 import uuid  # Для генерации уникальных идентификаторов задач
 
 # Bot token
-TOKEN = "7261556871:AAH7kkSsAxa9Iibu3Vy_dfjo20KPMlKoTjM"
+TOKEN = "7695838711:AAEne9ai-xk2m_6S-2lNoEcXg7ai1S6z5Ds"
 
 # Инициализация бота и диспетчера
 bot = Bot(token=TOKEN)
