@@ -58,7 +58,7 @@ back_keyboard = ReplyKeyboardMarkup(
 # Boshlang'ich buyruq
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
-    if message.from_user.id == 6699675868:  # Asl admin ID-si
+    if message.from_user.id == 114253636:  # Asl admin ID-si
         await message.answer("Ishni tanlang: 🤔", reply_markup=admin_keyboard)
     else:
         await message.answer(f"Salom, {message.from_user.full_name}!👋\nSizning ID: `{message.from_user.id}`", parse_mode="Markdown")
@@ -217,10 +217,10 @@ async def task_done_or_not(callback_query: types.CallbackQuery):
     task_text = task_data["task"]
 
     if callback_query.data.startswith("done_"):
-        await bot.send_message(6699675868, f"{employees[employee_id]} xodimi vazifani bajardi: {task_text} ✅")
+        await bot.send_message(114253636, f"{employees[employee_id]} xodimi vazifani bajardi: {task_text} ✅")
         await bot.send_message(employee_id, "Rahmat, vazifani bajardingiz! ✅")
     else:
-        await bot.send_message(6699675868, f"{employees[employee_id]} xodimi vazifani bajarmadi: {task_text} ❌")
+        await bot.send_message(114253636, f"{employees[employee_id]} xodimi vazifani bajarmadi: {task_text} ❌")
         await bot.send_message(employee_id, "Vazifa bajarmadingiz. ❌")
 
     await bot.answer_callback_query(callback_query.id)
