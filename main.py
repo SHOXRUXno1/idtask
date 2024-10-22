@@ -11,6 +11,7 @@ import uuid  # Для генерации уникальных идентифик
 # Bot token
 TOKEN = "7695838711:AAEne9ai-xk2m_6S-2lNoEcXg7ai1S6z5Ds"  # Замените на ваш токен
 ADMIN_ID = 114253636
+
 # Инициализация бота и диспетчера
 bot = Bot(token=TOKEN)
 storage = MemoryStorage()
@@ -20,21 +21,17 @@ dp = Dispatcher(storage=storage)
 employees = {}
 tasks = {}  # Хранение заданий для каждого сотрудника
 
-
 # Статусы
 class AddEmployee(StatesGroup):
     waiting_for_employee_id = State()
     waiting_for_employee_position = State()
 
-
 class AssignTask(StatesGroup):
     waiting_for_task = State()
     chosen_employee_id = State()
 
-
 class RemoveEmployee(StatesGroup):
     waiting_for_employee_to_remove = State()
-
 
 # Админская клавиатура
 admin_keyboard = ReplyKeyboardMarkup(
@@ -62,7 +59,6 @@ back_keyboard = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
-
 # Начальный командный обработчик
 @dp.message(Command("start"))
 async def cmd_start(message: types.Message):
@@ -72,20 +68,17 @@ async def cmd_start(message: types.Message):
         await message.answer(f"Salom, {message.from_user.full_name}!👋\nSizning ID: `{message.from_user.id}`",
                              parse_mode="Markdown", reply_markup=user_keyboard)
 
-
 # Процесс добавления сотрудника
 @dp.message(lambda message: message.text == "1 - Xodim qo'shish 🤝")
 async def add_employee_start(message: types.Message, state: FSMContext):
     await message.answer("Iltimos, xodimning Telegram ID'sini kiriting: 🆔")
     await state.set_state(AddEmployee.waiting_for_employee_id)
 
-
 @dp.message(AddEmployee.waiting_for_employee_id)
 async def employee_id_received(message: types.Message, state: FSMContext):
     await state.update_data(employee_id=message.text)
     await message.answer("Iltimos, xodimning lavozimini kiriting: 🏢")
     await state.set_state(AddEmployee.waiting_for_employee_position)
-
 
 @dp.message(AddEmployee.waiting_for_employee_position)
 async def employee_position_received(message: types.Message, state: FSMContext):
@@ -97,7 +90,6 @@ async def employee_position_received(message: types.Message, state: FSMContext):
     await message.answer("Orqaga qaytish uchun tugmani bosing:", reply_markup=back_keyboard)
     await state.clear()
 
-
 # Обработка кнопки "Orqaga"
 @dp.message(lambda message: message.text == "Orqaga ↩️")
 async def go_back(message: types.Message):
@@ -105,7 +97,6 @@ async def go_back(message: types.Message):
         await message.answer("Ishni tanlang: 🤔", reply_markup=admin_keyboard)
     else:
         await message.answer("Ishni tanlang: 🤔", reply_markup=user_keyboard)
-
 
 # Процесс удаления сотрудника
 @dp.message(lambda message: message.text == "3 - Xodimni o'chirish ❌")
@@ -122,7 +113,6 @@ async def remove_employee_start(message: types.Message):
     keyboard = InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 
     await message.answer("O'chirish uchun xodimni tanlang: ❌", reply_markup=keyboard)
-
 
 # Обработка выбора сотрудника для удаления
 @dp.callback_query(lambda c: c.data and c.data.startswith("remove_"))
@@ -142,7 +132,6 @@ async def employee_to_remove(callback_query: types.CallbackQuery):
 
     await bot.answer_callback_query(callback_query.id)
 
-
 # Процесс отправки сообщения сотруднику
 @dp.message(lambda message: message.text == "2 - Xodimga xabar yozish 📨")
 async def choose_employee_for_task(message: types.Message):
@@ -158,7 +147,6 @@ async def choose_employee_for_task(message: types.Message):
     keyboard = InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 
     await message.answer("Xodimni tanlang: 🧑‍💼", reply_markup=keyboard)
-
 
 # Обработка выбора сотрудника для задания
 @dp.callback_query(lambda c: c.data and c.data.startswith("choose_"))
@@ -178,7 +166,6 @@ async def employee_chosen(callback_query: types.CallbackQuery, state: FSMContext
     )
     await state.set_state(AssignTask.waiting_for_task)
     await bot.answer_callback_query(callback_query.id)
-
 
 @dp.message(AssignTask.waiting_for_task)
 async def task_assigned(message: types.Message, state: FSMContext):
@@ -221,10 +208,7 @@ async def task_assigned(message: types.Message, state: FSMContext):
 
     await state.clear()
 
-
 # Обработка выполнения задачи
-
-
 @dp.callback_query(lambda c: c.data and (c.data.startswith("done_") or c.data.startswith("not_done_")))
 async def task_done_or_not(callback_query: types.CallbackQuery):
     logging.info(f"Received callback data: {callback_query.data}")
@@ -249,7 +233,7 @@ async def task_done_or_not(callback_query: types.CallbackQuery):
             await bot.send_message(employee_id, "Raxmat - 👍, Siz bajardingiz - ✅")
         else:
             await bot.send_message(sender_id,
-                                   f"Xodim {employees[employee_id]} - 👨‍💼 vazifani bajarmadi: \ Vazifa: {task_text} ❌")
+                                   f"Xodim {employees[employee_id]} - 👨‍💼 vazifani bajarmadi: \nVazifa: {task_text} ❌")
             await bot.send_message(employee_id, "Raxmat - 👍, Siz bajarmadingiz - ❌")  # Сообщение для сотрудника
 
         # Удаляем задачу из словаря
@@ -257,16 +241,20 @@ async def task_done_or_not(callback_query: types.CallbackQuery):
 
     await bot.answer_callback_query(callback_query.id)
 
-
 async def set_commands():
     commands = [
         types.BotCommand(command="start", description="Botni ishga tushirish"),
     ]
     await bot.set_my_commands(commands)
 
-
 # Запуск бота
+async def on_startup(dp):
+    await set_commands()  # Установка команд при запуске
+
+async def main():
+    await on_startup(dp)  # Вызов ваших функций инициализации
+    await dp.start_polling(bot)  # Передаем экземпляр бота
+
 if __name__ == '__main__':
-    asyncio.run(set_commands())  # Установите команды при запуске
     logging.basicConfig(level=logging.INFO)
-    asyncio.run(dp.start_polling(bot))
+    asyncio.run(main())
