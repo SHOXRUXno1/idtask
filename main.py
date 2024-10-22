@@ -258,7 +258,15 @@ async def task_done_or_not(callback_query: types.CallbackQuery):
     await bot.answer_callback_query(callback_query.id)
 
 
+async def set_commands():
+    commands = [
+        types.BotCommand(command="start", description="Botni ishga tushirish"),
+    ]
+    await bot.set_my_commands(commands)
+
+
 # Запуск бота
 if __name__ == '__main__':
+    asyncio.run(set_commands())  # Установите команды при запуске
     logging.basicConfig(level=logging.INFO)
     asyncio.run(dp.start_polling(bot))
